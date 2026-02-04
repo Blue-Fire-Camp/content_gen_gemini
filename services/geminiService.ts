@@ -44,7 +44,7 @@ export const generateResumeContent = async (experience: Experience): Promise<Gen
       {
         "parts": [
           {
-            "text": prompt
+            "text": prompt }
         ]
       }
     ],
