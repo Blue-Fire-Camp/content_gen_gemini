@@ -11,7 +11,7 @@ import { Experience, GeneratedResult } from "../types";
 const API_KEY = process.env.API_KEY || '';
 const API_URL =
   process.env.GENAI_API_URL ||
-  "https://generativelanguage.googleapis.com/v1/models/gemini-3-flash-preview:generate";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent";
 
 export const generateResumeContent = async (experience: Experience): Promise<GeneratedResult> => {
   const prompt = `
