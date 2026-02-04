@@ -58,7 +58,7 @@ export const generateResumeContent = async (experience: Experience): Promise<Gen
     }
 
     // Use Bearer token as typical curl Authorization header.
-    headers["Authorization"] = `Bearer ${API_KEY}`;
+    headers["x-goog-api-key"] = `${API_KEY}`;
 
     const res = await fetch(API_URL, {
       method: "POST",
