@@ -39,12 +39,16 @@ export const generateResumeContent = async (experience: Experience): Promise<Gen
     // The exact request schema can vary by API version; this payload sends the prompt in a "prompt" / "input" block.
     const body = {
       // If your API expects a different field name (e.g., "prompt" or "input"), adjust here.
-      prompt: {
-        text: prompt
-      },
+
+       "contents": [
+      {
+        "parts": [
+          {
+            "text": prompt
+        ]
+      }
+    ],
       // Optional generation params:
-      temperature: 0.0,
-      maxOutputTokens: 1024,
       // If your API supports tools or search, include the relevant config keys here.
       // e.g., tools: [{ googleSearch: {} }]
     };
