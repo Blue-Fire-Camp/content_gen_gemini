@@ -8,12 +8,14 @@ import { Experience, GeneratedResult } from "../types";
  * - The API key is read from process.env.API_KEY and used as a Bearer token.
  * - You can override the API URL via process.env.GENAI_API_URL if needed.
  */
-const API_KEY = process.env.API_KEY || '';
+const API_KEY = process.env.API_KEY || "";
 const API_URL =
   process.env.GENAI_API_URL ||
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent";
 
-export const generateResumeContent = async (experience: Experience): Promise<GeneratedResult> => {
+export const generateResumeContent = async (
+  experience: Experience,
+): Promise<GeneratedResult> => {
   const prompt = `
     Analyze this career experience and perform deep research using Google Search.
     
@@ -40,14 +42,15 @@ export const generateResumeContent = async (experience: Experience): Promise<Gen
     const body = {
       // If your API expects a different field name (e.g., "prompt" or "input"), adjust here.
 
-       "contents": [
-      {
-        "parts": [
-          {
-            "text": prompt }
-        ]
-      }
-    ],
+      contents: [
+        {
+          parts: [
+            {
+              text: prompt,
+            },
+          ],
+        },
+      ],
       // Optional generation params:
       // If your API supports tools or search, include the relevant config keys here.
       // e.g., tools: [{ googleSearch: {} }]
@@ -73,7 +76,9 @@ export const generateResumeContent = async (experience: Experience): Promise<Gen
     if (!res.ok) {
       const errText = await res.text().catch(() => "");
       console.error("Generative API HTTP error:", res.status, errText);
-      throw new Error(`Generative API request failed with status ${res.status}`);
+      throw new Error(
+        `Generative API request failed with status ${res.status}`,
+      );
     }
 
     const responseJson: any = await res.json();
@@ -81,9 +86,14 @@ export const generateResumeContent = async (experience: Experience): Promise<Gen
     // Try to locate the model's text output in a few common shapes returned by generative APIs.
     const possibleText =
       // new style: output -> [ { content: [ { type: 'output_text', text: '...' } ] } ]
-      responseJson.output?.[0]?.content?.find((c: any) => c.text || c.type === "output_text")?.text ||
+      responseJson.output?.[0]?.content?.find(
+        (c: any) => c.text || c.type === "output_text",
+      )?.text ||
       // older/candidate style:
-      responseJson.candidates?.[0]?.content?.[0]?.text ||
+      responseJson.candidates?.[0]?.content?.parts
+        ?.map((p: any) => p.text)
+        .filter(Boolean)
+        .join(" ") ||
       // fallback fields some APIs use:
       responseJson.outputText ||
       responseJson.text ||
@@ -92,11 +102,21 @@ export const generateResumeContent = async (experience: Experience): Promise<Gen
 
     let data: any = {};
     try {
-      data = typeof possibleText === "string" ? JSON.parse(possibleText) : possibleText;
+      data =
+        typeof possibleText === "string"
+          ? JSON.parse(possibleText)
+          : possibleText;
     } catch (parseError) {
       // If the model didn't return strict JSON, throw with helpful debugging info.
-      console.error("Failed to parse generation output as JSON:", parseError, "raw:", possibleText);
-      throw new Error("Model output was not valid JSON. See server logs for raw output.");
+      console.error(
+        "Failed to parse generation output as JSON:",
+        parseError,
+        "raw:",
+        possibleText,
+      );
+      throw new Error(
+        "Model output was not valid JSON. See server logs for raw output.",
+      );
     }
 
     // Extract grounding sources if available (structure may vary).
@@ -122,6 +142,8 @@ export const generateResumeContent = async (experience: Experience): Promise<Gen
     };
   } catch (error) {
     console.error("Generative API Error:", error);
-    throw new Error("Failed to generate content. Please ensure your API key and endpoint are correct.");
+    throw new Error(
+      "Failed to generate content. Please ensure your API key and endpoint are correct.",
+    );
   }
 };
