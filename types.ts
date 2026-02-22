@@ -6,6 +6,7 @@ export interface Experience {
   startDate: string;
   endDate: string;
   description: string;
+  generationInstructions: string;
 }
 
 export interface GeneratedResult {

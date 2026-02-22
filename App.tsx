@@ -8,7 +8,7 @@ import ResultCard from './components/ResultCard';
 
 const App: React.FC = () => {
   const [experiences, setExperiences] = useState<Experience[]>([
-    { id: uuidv4(), company: '', role: '', startDate: '', endDate: '', description: '' }
+    { id: uuidv4(), company: '', role: '', startDate: '', endDate: '', description: '', generationInstructions: '' }
   ]);
   const [results, setResults] = useState<GeneratedResult[]>([]);
   const [status, setStatus] = useState<AppStatus>(AppStatus.IDLE);
@@ -16,7 +16,7 @@ const App: React.FC = () => {
 
   const addExperience = () => {
     setExperiences([...experiences, { 
-      id: uuidv4(), company: '', role: '', startDate: '', endDate: '', description: '' 
+      id: uuidv4(), company: '', role: '', startDate: '', endDate: '', description: '', generationInstructions: ''
     }]);
   };
 

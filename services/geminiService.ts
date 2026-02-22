@@ -23,6 +23,10 @@ export const generateResumeContent = async (
     Role: ${experience.role}
     Period: ${experience.startDate} to ${experience.endDate}
     User's basic input: ${experience.description || "None provided. Research the company's state and projects from scratch."}
+    Additional user instructions for how to write the bullets (tone, bullet count, must-include frameworks/tools, seniority level, etc.): ${
+      experience.generationInstructions ||
+      "None provided. Use your best judgment to produce concise, high-impact bullets appropriate for this role level."
+    }
 
     CRITICAL INSTRUCTIONS:
     1. Research actual high-impact projects, product launches, architectural shifts, or business milestones ${experience.company} was undergoing between ${experience.startDate} and ${experience.endDate}.

@@ -71,6 +71,22 @@ const ExperienceInput: React.FC<Props> = ({ experience, onUpdate, onRemove }) =>
           onChange={(e) => onUpdate(experience.id, { description: e.target.value })}
         />
       </div>
+
+      <div className="mt-4 space-y-1">
+        <div className="flex justify-between items-center">
+          <label className="text-xs font-semibold text-slate-600 uppercase tracking-wider">Advanced Instructions (Optional)</label>
+          <span className="text-[10px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full font-bold">Control tone, bullet count, tech, etc.</span>
+        </div>
+        <textarea
+          placeholder="e.g. Generate 6 concise bullets, energetic but professional tone, must mention React, TypeScript, and GraphQL, focus on leadership impact."
+          rows={3}
+          className="w-full px-4 py-2 bg-slate-50 border border-slate-300 text-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all placeholder-slate-400 font-medium"
+          value={experience.generationInstructions}
+          onChange={(e) =>
+            onUpdate(experience.id, { generationInstructions: e.target.value })
+          }
+        />
+      </div>
     </div>
   );
 };
