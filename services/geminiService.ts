@@ -34,6 +34,8 @@ export const generateResumeContent = async (
     Format the output as a valid JSON object with these keys:
     - bulletPoints: string[]
     - roadmapContext: string
+
+    Return ONLY the raw JSON object, no markdown code blocks, no extra text before or after.
   `;
 
   try {
@@ -100,12 +102,24 @@ export const generateResumeContent = async (
       // Last fallback: stringify the whole response so parsing doesn't crash (will likely fail JSON.parse).
       JSON.stringify(responseJson);
 
+    // Strip markdown code fences (e.g. ```json ... ```) if the model wrapped the output
+    const stripJsonMarkdown = (s: string): string => {
+      let out = s.trim();
+      const jsonMatch = out.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?```\s*$/);
+      if (jsonMatch) return jsonMatch[1].trim();
+      if (out.startsWith("```json") || out.startsWith("```")) {
+        out = out.replace(/^```(?:json)?\s*\n?/, "").replace(/\n?```\s*$/, "");
+      }
+      // Strip leading "json" label if the model prefixed it
+      out = out.replace(/^json\s*\n+/i, "");
+      return out.trim();
+    };
+
     let data: any = {};
     try {
-      data =
-        typeof possibleText === "string"
-          ? JSON.parse(possibleText)
-          : possibleText;
+      const toParse =
+        typeof possibleText === "string" ? stripJsonMarkdown(possibleText) : possibleText;
+      data = typeof toParse === "string" ? JSON.parse(toParse) : toParse;
     } catch (parseError) {
       // If the model didn't return strict JSON, throw with helpful debugging info.
       console.error(
